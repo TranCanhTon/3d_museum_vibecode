@@ -99,7 +99,27 @@ export class City {
     });
   }
 
+  /**
+   * A grass "lot" the building sits on, slightly larger than its footprint
+   * and raised just above the road surface, so the building reads as
+   * standing on its own plot rather than rising directly out of the
+   * asphalt with the road running flush against its walls.
+   */
+  _addGrassLot(x, z, width, depth) {
+    const margin = 2;
+    const lot = new THREE.Mesh(
+      new THREE.PlaneGeometry(width + margin, depth + margin),
+      new THREE.MeshStandardMaterial({ color: 0x8fb877 }),
+    );
+    lot.rotation.x = -Math.PI / 2;
+    lot.position.set(x, 0.02, z);
+    lot.receiveShadow = true;
+    this.scene.add(lot);
+  }
+
   _addBuilding(x, z, width, depth, height, color) {
+    this._addGrassLot(x, z, width, depth);
+
     const geo = new THREE.BoxGeometry(width, height, depth);
     const mat = new THREE.MeshStandardMaterial({ color });
     const mesh = new THREE.Mesh(geo, mat);
@@ -157,6 +177,8 @@ export class City {
     const width = MUSEUM_WIDTH;
     const depth = MUSEUM_DEPTH;
     const height = MUSEUM_HEIGHT;
+
+    this._addGrassLot(x, z, width, depth);
 
     const mat = new THREE.MeshStandardMaterial({ color: 0xf1eee4 });
     const body = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), mat);
