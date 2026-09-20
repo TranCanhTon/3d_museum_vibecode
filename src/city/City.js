@@ -13,12 +13,17 @@ const BUILDING_COLORS = [0xe07a5f, 0xf2cc8f, 0x81b29a, 0xd8a48f, 0xa8dadc];
 const BUILDING_HEIGHT = 4;
 const MUSEUM_HEIGHT = 6;
 
-const COL_X = [-18, 0, 18];
-const ROW_Z = [-16, 16];
-const BUILDING_WIDTH = 10;
-const BUILDING_DEPTH = 8;
-const MUSEUM_WIDTH = 14;
-const MUSEUM_DEPTH = 10;
+// Building centers double as the vertical "driveway" road positions (the
+// road runs underneath, hidden by the building itself - see _buildRoads).
+// Only the z=0 mid-street actually crosses the columns in the open gap
+// between the two rows, so buildings never sit on top of a visible
+// intersection.
+const COL_X = [-12, 0, 12];
+const ROW_Z = [-9, 9];
+const BUILDING_WIDTH = 8;
+const BUILDING_DEPTH = 6;
+const MUSEUM_WIDTH = 11;
+const MUSEUM_DEPTH = 8;
 const MUSEUM_COL = 1; // center column
 const MUSEUM_ROW = 1; // front row (closer to the player's spawn point)
 
@@ -46,7 +51,7 @@ export class City {
   }
 
   _buildGround() {
-    const groundGeo = new THREE.PlaneGeometry(120, 140);
+    const groundGeo = new THREE.PlaneGeometry(100, 110);
     const groundMat = new THREE.MeshStandardMaterial({ color: 0x9fc48a });
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
@@ -58,23 +63,26 @@ export class City {
     const roadMat = new THREE.MeshStandardMaterial({ color: 0x4a4a52 });
     const roadWidth = 5;
 
-    // One access road per building column, running the depth of the city.
+    // One access "driveway" road per building column, running the depth of
+    // the city. Each building sits on top of its own column, so the road
+    // itself is only visible in the open stretches in front of/behind the
+    // buildings, not as a crossing underneath them.
     for (const x of COL_X) {
-      const road = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, 134), roadMat);
+      const road = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, 104), roadMat);
       road.rotation.x = -Math.PI / 2;
       road.position.set(x, 0.01, 0);
       road.receiveShadow = true;
       this.scene.add(road);
     }
 
-    // Cross streets: one in front of each building row, plus a mid street.
-    for (const z of [...ROW_Z, 0]) {
-      const road = new THREE.Mesh(new THREE.PlaneGeometry(114, roadWidth), roadMat);
-      road.rotation.x = -Math.PI / 2;
-      road.position.set(0, 0.01, z);
-      road.receiveShadow = true;
-      this.scene.add(road);
-    }
+    // A single mid street crossing all three columns, positioned in the
+    // open gap between the two building rows so it forms real
+    // intersections in empty space rather than under a building.
+    const midRoad = new THREE.Mesh(new THREE.PlaneGeometry(94, roadWidth), roadMat);
+    midRoad.rotation.x = -Math.PI / 2;
+    midRoad.position.set(0, 0.01, 0);
+    midRoad.receiveShadow = true;
+    this.scene.add(midRoad);
   }
 
   _buildBuildingGrid() {
@@ -117,10 +125,10 @@ export class City {
     // A handful of trees tucked into the gaps between buildings, away from
     // the main camera-to-player sightlines down each column.
     const spots = [
-      [-9, 8],
-      [9, 8],
-      [-9, -8],
-      [9, -8],
+      [-6, 4.5],
+      [6, 4.5],
+      [-6, -4.5],
+      [6, -4.5],
     ];
     for (const [x, z] of spots) this._addTree(x, z);
   }
