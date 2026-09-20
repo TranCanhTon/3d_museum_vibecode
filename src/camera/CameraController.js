@@ -24,7 +24,7 @@ export class CameraController {
     this.camera = camera;
     this.input = input;
     this.target = target; // THREE.Object3D to follow
-    this.yaw = Math.PI; // start facing the character from behind
+    this.yaw = 0; // camera starts on the +Z side, behind a character walking toward -Z
     this.distance = DEFAULT_DISTANCE;
     this.pitch = THREE.MathUtils.degToRad(PITCH_DEG);
     this.occluders = [];

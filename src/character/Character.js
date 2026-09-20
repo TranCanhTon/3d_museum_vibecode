@@ -12,7 +12,7 @@ const RADIUS = 0.35; // collision radius in meters
 export class Character {
   constructor(scene) {
     this.group = new THREE.Group();
-    this.group.position.set(0, 0, 16);
+    this.group.position.set(0, 0, 34);
     this.radius = RADIUS;
     this.walkTime = 0;
     this.isMoving = false;
