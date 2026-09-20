@@ -116,4 +116,10 @@ export class Character {
     this.group.position.x = x;
     this.group.position.z = z;
   }
+
+  /** Snaps facing to a yaw in degrees (0 = +Z), e.g. when teleporting through a door. */
+  setFacingDeg(deg) {
+    this._facingAngle = THREE.MathUtils.degToRad(deg);
+    this.group.rotation.y = this._facingAngle;
+  }
 }

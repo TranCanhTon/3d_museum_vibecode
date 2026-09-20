@@ -36,9 +36,11 @@ const MUSEUM_ROW = 1; // front row (closer to the player's spawn point)
 export class City {
   constructor(scene) {
     this.scene = scene;
+    this.group = new THREE.Group(); // everything but lighting, so the whole city can be hidden at once
+    scene.add(this.group);
     this.colliders = [];
     this.occluderMeshes = []; // solid meshes the camera should never clip through
-    this.museumEntrance = null; // {x, z, halfWidth, triggerDepth} world-space trigger
+    this.museumEntrance = null; // {x, z, halfWidth, triggerDepth, layoutId} world-space trigger
     this._build();
   }
 
@@ -56,7 +58,7 @@ export class City {
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
-    this.scene.add(ground);
+    this.group.add(ground);
   }
 
   _buildRoads() {
@@ -72,7 +74,7 @@ export class City {
       road.rotation.x = -Math.PI / 2;
       road.position.set(x, 0.01, 0);
       road.receiveShadow = true;
-      this.scene.add(road);
+      this.group.add(road);
     }
 
     // A single mid street crossing all three columns, positioned in the
@@ -82,7 +84,7 @@ export class City {
     midRoad.rotation.x = -Math.PI / 2;
     midRoad.position.set(0, 0.01, 0);
     midRoad.receiveShadow = true;
-    this.scene.add(midRoad);
+    this.group.add(midRoad);
   }
 
   _buildBuildingGrid() {
@@ -114,7 +116,7 @@ export class City {
     lot.rotation.x = -Math.PI / 2;
     lot.position.set(x, 0.02, z);
     lot.receiveShadow = true;
-    this.scene.add(lot);
+    this.group.add(lot);
   }
 
   _addBuilding(x, z, width, depth, height, color) {
@@ -126,7 +128,7 @@ export class City {
     mesh.position.set(x, height / 2, z);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
-    this.scene.add(mesh);
+    this.group.add(mesh);
 
     // Flat roof cap for a bit of visual interest.
     const roof = new THREE.Mesh(
@@ -135,7 +137,7 @@ export class City {
     );
     roof.position.set(x, height + 0.15, z);
     roof.castShadow = true;
-    this.scene.add(roof);
+    this.group.add(roof);
 
     this.colliders.push(makeBoxCollider(x, z, width, depth));
     this.occluderMeshes.push(mesh);
@@ -160,7 +162,7 @@ export class City {
     );
     trunk.position.set(x, 0.7, z);
     trunk.castShadow = true;
-    this.scene.add(trunk);
+    this.group.add(trunk);
 
     const leaves = new THREE.Mesh(
       new THREE.ConeGeometry(1.3, 2.6, 8),
@@ -168,7 +170,7 @@ export class City {
     );
     leaves.position.set(x, 2.6, z);
     leaves.castShadow = true;
-    this.scene.add(leaves);
+    this.group.add(leaves);
 
     this.colliders.push(makeBoxCollider(x, z, 0.6, 0.6));
   }
@@ -185,7 +187,7 @@ export class City {
     body.position.set(x, height / 2, z);
     body.castShadow = true;
     body.receiveShadow = true;
-    this.scene.add(body);
+    this.group.add(body);
     this.occluderMeshes.push(body);
 
     // Columns flanking the entrance for a museum-y facade. The entrance
@@ -196,19 +198,19 @@ export class City {
       const col = new THREE.Mesh(colGeo, colMat);
       col.position.set(x + cx, (height * 0.9) / 2, z + depth / 2 + 0.4);
       col.castShadow = true;
-      this.scene.add(col);
+      this.group.add(col);
     }
 
     // Entrance door gap (visual only - the whole footprint collides except
     // for a walk-in trigger zone in front).
     const doorWidth = 3;
     const entranceZ = z + depth / 2 + 1.6;
-    this.museumEntrance = { x, z: entranceZ, halfWidth: doorWidth / 2, triggerDepth: 2.2 };
+    this.museumEntrance = { x, z: entranceZ, halfWidth: doorWidth / 2, triggerDepth: 2.2, layoutId: 'ateneum' };
 
     // Name sign above the entrance.
     const sign = this._makeSignMesh('ATENEUM');
     sign.position.set(x, height + 1.2, z + depth / 2 + 0.1);
-    this.scene.add(sign);
+    this.group.add(sign);
 
     // Building collides as a box, but we leave the door gap "soft" by
     // splitting the front wall into two side segments so the doorway itself

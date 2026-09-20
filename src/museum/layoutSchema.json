@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Museum Walk layout",
+  "description": "Describes one museum building's interior as real-scale (1 unit = 1 meter) floors, rooms, walls, doors, and artwork slots. See src/museum/validateLayout.js for the enforced rules and src/museum/MuseumBuilder.js for how this is turned into 3D geometry.",
+  "type": "object",
+  "required": ["id", "name", "units", "floors", "entrance"],
+  "properties": {
+    "id": { "type": "string", "description": "Unique slug, used as the fetch key (public/museums/<id>.json)." },
+    "name": { "type": "string" },
+    "units": { "const": "meters" },
+    "floors": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/floor" }
+    },
+    "entrance": {
+      "type": "object",
+      "description": "Where the player spawns after walking through the exterior door, and which door/floor that is.",
+      "required": ["floorId", "doorId", "spawnPoint"],
+      "properties": {
+        "floorId": { "type": "string" },
+        "doorId": { "type": "string" },
+        "spawnPoint": { "$ref": "#/definitions/point2d" },
+        "spawnFacingDeg": { "type": "number", "description": "Optional yaw in degrees the character faces on spawn (0 = +Z)." }
+      }
+    }
+  },
+  "definitions": {
+    "point2d": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "[x, z] in meters, local to the floor."
+    },
+    "floor": {
+      "type": "object",
+      "required": ["id", "name", "levelY", "ceilingHeight", "rooms", "walls", "doors"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "levelY": { "type": "number", "description": "World-space Y (meters) of this floor's walking surface." },
+        "ceilingHeight": { "type": "number", "exclusiveMinimum": 2, "description": "Meters above levelY; used as the default wall height." },
+        "rooms": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/room" }
+        },
+        "walls": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/wall" }
+        },
+        "doors": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/door" }
+        },
+        "artworkSlots": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/artworkSlot" }
+        }
+      }
+    },
+    "room": {
+      "type": "object",
+      "required": ["id", "name", "polygon"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "polygon": {
+          "type": "array",
+          "minItems": 3,
+          "items": { "$ref": "#/definitions/point2d" },
+          "description": "Simple (non-self-intersecting) polygon outlining the room's floor, in meters."
+        }
+      }
+    },
+    "wall": {
+      "type": "object",
+      "required": ["id", "start", "end"],
+      "properties": {
+        "id": { "type": "string" },
+        "start": { "$ref": "#/definitions/point2d" },
+        "end": { "$ref": "#/definitions/point2d" },
+        "height": { "type": "number", "description": "Overrides the floor's ceilingHeight for this wall." },
+        "thickness": { "type": "number", "default": 0.3 }
+      }
+    },
+    "door": {
+      "type": "object",
+      "required": ["id", "wallId", "position", "width", "connectsTo"],
+      "properties": {
+        "id": { "type": "string" },
+        "wallId": { "type": "string", "description": "Must match a wall.id on the same floor." },
+        "position": { "type": "number", "minimum": 0, "maximum": 1, "description": "0-1 fraction along the wall, from start to end, where the door's center sits." },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "connectsTo": {
+          "description": "\"exterior\" for the main entrance, or the two room ids this door joins.",
+          "oneOf": [
+            { "const": "exterior" },
+            { "type": "array", "items": { "type": "string" }, "minItems": 2, "maxItems": 2 }
+          ]
+        }
+      }
+    },
+    "artworkSlot": {
+      "type": "object",
+      "required": ["id", "wallId", "position", "normal", "maxWidth", "maxHeight", "artworkId"],
+      "properties": {
+        "id": { "type": "string" },
+        "wallId": { "type": "string" },
+        "position": { "type": "number", "minimum": 0, "maximum": 1 },
+        "normal": {
+          "$ref": "#/definitions/point2d",
+          "description": "Unit vector [nx, nz] pointing away from the wall, into the room the artwork faces."
+        },
+        "maxWidth": { "type": "number", "exclusiveMinimum": 0 },
+        "maxHeight": { "type": "number", "exclusiveMinimum": 0 },
+        "sillHeight": { "type": "number", "default": 1.1, "description": "Meters from the floor to the bottom of the artwork." },
+        "artworkId": { "type": "string", "description": "Local artwork data id (stage 3), or a TODO placeholder string." }
+      }
+    }
+  }
+}

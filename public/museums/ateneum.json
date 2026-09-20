@@ -1,0 +1,58 @@
+{
+  "id": "ateneum",
+  "name": "Ateneum Art Museum (Helsinki) - PLACEHOLDER LAYOUT",
+  "units": "meters",
+  "notes": [
+    "TODO: this entire layout is a plausible placeholder, not the real Ateneum floor plan.",
+    "TODO: replace room shapes/wall positions once a real floor plan image or dimensions are provided.",
+    "TODO: ceilingHeight (5.5m) and wall thickness (0.3m) are guesses - the real building's grand halls are likely taller.",
+    "TODO: only one floor is modeled; the real Ateneum has multiple floors (ground + upper galleries).",
+    "TODO: artwork slots are placeholder positions/sizes with fake artworkIds - stage 3 will replace artworkId with real Finna/FNG ids once fetched."
+  ],
+  "floors": [
+    {
+      "id": "floor1",
+      "name": "Ground Floor (TODO: placeholder)",
+      "levelY": 0,
+      "ceilingHeight": 5.5,
+      "rooms": [
+        { "id": "lobby", "name": "Lobby (TODO)", "polygon": [[-4, 0], [4, 0], [4, 8], [-4, 8]] },
+        { "id": "gallery-west", "name": "West Gallery (TODO)", "polygon": [[-12, -8], [-4, -8], [-4, 8], [-12, 8]] },
+        { "id": "gallery-east", "name": "East Gallery (TODO)", "polygon": [[4, -8], [12, -8], [12, 8], [4, 8]] },
+        { "id": "gallery-north", "name": "North Gallery (TODO)", "polygon": [[-4, -8], [4, -8], [4, 0], [-4, 0]] }
+      ],
+      "walls": [
+        { "id": "ext-south-left", "start": [-12, 8], "end": [-4, 8], "thickness": 0.3 },
+        { "id": "ext-south-lobby", "start": [-4, 8], "end": [4, 8], "thickness": 0.3 },
+        { "id": "ext-south-right", "start": [4, 8], "end": [12, 8], "thickness": 0.3 },
+        { "id": "ext-north", "start": [-12, -8], "end": [12, -8], "thickness": 0.3 },
+        { "id": "ext-west", "start": [-12, -8], "end": [-12, 8], "thickness": 0.3 },
+        { "id": "ext-east", "start": [12, -8], "end": [12, 8], "thickness": 0.3 },
+        { "id": "int-west", "start": [-4, -8], "end": [-4, 8], "thickness": 0.25 },
+        { "id": "int-east", "start": [4, -8], "end": [4, 8], "thickness": 0.25 },
+        { "id": "int-lobby-north", "start": [-4, 0], "end": [4, 0], "thickness": 0.25 }
+      ],
+      "doors": [
+        { "id": "door-entrance", "wallId": "ext-south-lobby", "position": 0.5, "width": 1.8, "connectsTo": "exterior" },
+        { "id": "door-west", "wallId": "int-west", "position": 0.75, "width": 1.6, "connectsTo": ["lobby", "gallery-west"] },
+        { "id": "door-east", "wallId": "int-east", "position": 0.75, "width": 1.6, "connectsTo": ["lobby", "gallery-east"] },
+        { "id": "door-north", "wallId": "int-lobby-north", "position": 0.5, "width": 1.6, "connectsTo": ["lobby", "gallery-north"] }
+      ],
+      "artworkSlots": [
+        { "id": "slot-west-1", "wallId": "ext-west", "position": 0.25, "normal": [1, 0], "maxWidth": 1.2, "maxHeight": 1.0, "sillHeight": 1.1, "artworkId": "TODO-artwork-1" },
+        { "id": "slot-west-2", "wallId": "ext-west", "position": 0.75, "normal": [1, 0], "maxWidth": 1.4, "maxHeight": 1.1, "sillHeight": 1.1, "artworkId": "TODO-artwork-2" },
+        { "id": "slot-east-1", "wallId": "ext-east", "position": 0.25, "normal": [-1, 0], "maxWidth": 1.2, "maxHeight": 1.0, "sillHeight": 1.1, "artworkId": "TODO-artwork-3" },
+        { "id": "slot-east-2", "wallId": "ext-east", "position": 0.75, "normal": [-1, 0], "maxWidth": 1.3, "maxHeight": 1.6, "sillHeight": 0.9, "artworkId": "TODO-artwork-4" },
+        { "id": "slot-north-1", "wallId": "ext-north", "position": 0.1667, "normal": [0, 1], "maxWidth": 1.5, "maxHeight": 1.2, "sillHeight": 1.0, "artworkId": "TODO-artwork-5" },
+        { "id": "slot-north-2", "wallId": "ext-north", "position": 0.5, "normal": [0, 1], "maxWidth": 2.0, "maxHeight": 1.4, "sillHeight": 1.0, "artworkId": "TODO-artwork-6" },
+        { "id": "slot-north-3", "wallId": "ext-north", "position": 0.8333, "normal": [0, 1], "maxWidth": 1.5, "maxHeight": 1.2, "sillHeight": 1.0, "artworkId": "TODO-artwork-7" }
+      ]
+    }
+  ],
+  "entrance": {
+    "floorId": "floor1",
+    "doorId": "door-entrance",
+    "spawnPoint": [0, 6],
+    "spawnFacingDeg": 180
+  }
+}

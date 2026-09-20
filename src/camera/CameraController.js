@@ -68,7 +68,12 @@ export class CameraController {
       raycaster.far = fullDist;
       const hits = raycaster.intersectObjects(this.occluders, false);
       if (hits.length > 0) {
-        allowedDistance = Math.max(hits[0].distance - 0.5, MIN_DISTANCE * 0.5);
+        // Floor this near zero, not at some fraction of MIN_DISTANCE: if the
+        // obstruction is closer than that fraction (e.g. the character
+        // standing right against an interior wall), clamping to a larger
+        // "minimum" would push the camera past the hit and out the other
+        // side of the wall instead of pulling it in.
+        allowedDistance = Math.max(hits[0].distance - 0.3, 0.4);
         const ratio = allowedDistance / fullDist;
         _desiredCamPos.set(
           _targetPos.x + _dir.x * fullDist * ratio,
