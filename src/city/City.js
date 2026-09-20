@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { makeBoxCollider } from '../collision/Collision.js';
 
-const BUILDING_COLORS = [0xe07a5f, 0xf2cc8f, 0x81b29a, 0xd8a48f, 0xa8dadc];
+const BUILDING_COLORS = [0xf27a5e, 0xf6cf6b, 0x6fbf9c, 0xe8a2c4, 0x7fc4e0];
 
 // Buildings are kept deliberately short: the bird's-eye camera sits at
 // roughly 5-19m above the ground (see CameraController's pitch/distance
@@ -47,8 +47,10 @@ export class City {
   _build() {
     this._buildGround();
     this._buildRoads();
+    this._buildCrosswalks();
     this._buildBuildingGrid();
     this._buildTrees();
+    this._buildStreetLamps();
     this._buildLighting();
   }
 
@@ -85,6 +87,51 @@ export class City {
     midRoad.position.set(0, 0.01, 0);
     midRoad.receiveShadow = true;
     this.group.add(midRoad);
+  }
+
+  /** Zebra-stripe crosswalks where each column road crosses the open mid street. */
+  _buildCrosswalks() {
+    const stripeMat = new THREE.MeshStandardMaterial({ color: 0xf2f2ea });
+    const stripeCount = 5;
+    const stripeLength = 0.45;
+    const stripeSpan = 4; // slightly narrower than the 5m road so stripes don't overhang the edges
+    const gap = (5 - stripeCount * stripeLength) / (stripeCount - 1) + stripeLength;
+
+    for (const x of COL_X) {
+      for (let i = 0; i < stripeCount; i++) {
+        const z = -((stripeCount - 1) / 2) * gap + i * gap;
+        const stripe = new THREE.Mesh(new THREE.PlaneGeometry(stripeSpan, stripeLength), stripeMat);
+        stripe.rotation.x = -Math.PI / 2;
+        stripe.position.set(x, 0.015, z);
+        stripe.receiveShadow = true;
+        this.group.add(stripe);
+      }
+    }
+  }
+
+  _buildStreetLamps() {
+    const spots = [
+      [-3, 4.5],
+      [3, -4.5],
+    ];
+    for (const [x, z] of spots) this._addStreetLamp(x, z);
+  }
+
+  _addStreetLamp(x, z) {
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0x2e2e33 });
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 3, 8), poleMat);
+    pole.position.set(x, 1.5, z);
+    pole.castShadow = true;
+    this.group.add(pole);
+
+    const lamp = new THREE.Mesh(
+      new THREE.SphereGeometry(0.18, 10, 8),
+      new THREE.MeshStandardMaterial({ color: 0xfff3c4, emissive: 0xffdf88, emissiveIntensity: 0.6 }),
+    );
+    lamp.position.set(x, 3.05, z);
+    this.group.add(lamp);
+
+    this.colliders.push(makeBoxCollider(x, z, 0.3, 0.3));
   }
 
   _buildBuildingGrid() {

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { validateLayout } from './validateLayout.js';
 import { buildMuseum } from './MuseumBuilder.js';
+import { loadArtworkData } from './ArtworkData.js';
 
 // Each museum's interior is built once and placed at its own far-away
 // world-space offset so interiors never spatially overlap the city or each
@@ -51,11 +52,16 @@ export class MuseumLoader {
     const layout = await response.json();
     validateLayout(layout); // throws LayoutValidationError with a clear message on a bad file
 
+    // Artwork data is optional: before `npm run fetch:data` has ever been
+    // run, this resolves to an empty map and every slot falls back to its
+    // placeholder frame (see MuseumBuilder.buildArtworkFrame).
+    const artworkData = await loadArtworkData(layoutId);
+
     const slot = this._nextSlot;
     this._nextSlot += 1;
     const worldOffset = new THREE.Vector3(slot * INSTANCE_SPACING, 0, INSTANCE_SPACING);
 
-    const instance = buildMuseum(layout, worldOffset);
+    const instance = buildMuseum(layout, worldOffset, artworkData);
     this.scene.add(instance.group);
     return instance;
   }

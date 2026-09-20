@@ -12,6 +12,23 @@
       <div id="crosshair-hint">WASD move · Right-drag rotate camera · Scroll zoom</div>
       <div id="interact-prompt" class="hidden">Press <kbd>E</kbd> to view</div>
     </div>
+    <div id="artwork-overlay" class="hidden">
+      <div id="artwork-overlay-panel">
+        <button id="artwork-overlay-close" aria-label="Close">&times;</button>
+        <div id="artwork-overlay-image-wrap">
+          <img id="artwork-overlay-image" alt="" />
+          <div id="artwork-overlay-placeholder" class="hidden">No image yet</div>
+        </div>
+        <div id="artwork-overlay-info">
+          <h2 id="artwork-overlay-title"></h2>
+          <p id="artwork-overlay-meta"></p>
+          <p id="artwork-overlay-description"></p>
+          <p id="artwork-overlay-dimensions"></p>
+          <p id="artwork-overlay-license"></p>
+          <a id="artwork-overlay-source" href="#" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

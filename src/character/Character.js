@@ -122,4 +122,9 @@ export class Character {
     this._facingAngle = THREE.MathUtils.degToRad(deg);
     this.group.rotation.y = this._facingAngle;
   }
+
+  /** Unit direction the character is currently facing, in the XZ plane. */
+  getForwardXZ() {
+    return { x: Math.sin(this._facingAngle), z: Math.cos(this._facingAngle) };
+  }
 }

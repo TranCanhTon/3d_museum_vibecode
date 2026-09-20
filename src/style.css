@@ -68,3 +68,125 @@ kbd {
   padding: 1px 6px;
   font-weight: 600;
 }
+
+#artwork-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 14, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 10;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+#artwork-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#artwork-overlay-panel {
+  position: relative;
+  background: #fdfcf8;
+  color: #201d17;
+  border-radius: 12px;
+  max-width: 920px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 720px) {
+  #artwork-overlay-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+#artwork-overlay-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1;
+}
+
+#artwork-overlay-image-wrap {
+  background: #16151b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+}
+
+#artwork-overlay-image {
+  max-width: 100%;
+  max-height: 78vh;
+  display: block;
+  object-fit: contain;
+}
+
+#artwork-overlay-image.hidden {
+  display: none;
+}
+
+#artwork-overlay-placeholder {
+  color: #999;
+  font-size: 14px;
+}
+
+#artwork-overlay-placeholder.hidden {
+  display: none;
+}
+
+#artwork-overlay-info {
+  padding: 28px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#artwork-overlay-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+#artwork-overlay-meta {
+  font-size: 15px;
+  color: #55503f;
+  font-style: italic;
+}
+
+#artwork-overlay-description {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
+#artwork-overlay-dimensions,
+#artwork-overlay-license {
+  font-size: 13px;
+  color: #6b6656;
+}
+
+#artwork-overlay-source {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #2b5fb0;
+}
+
+#artwork-overlay-source.hidden {
+  display: none;
+}
